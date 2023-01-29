@@ -280,7 +280,7 @@ approval rating was just under 61%, and overall Americans gave a high of
 2021, which may indicate that President Biden’s lowest approval ratings
 occurred in 2022.
 
-## Box Plot
+## Comparing Approval/Disapproval Ratings of Each President
 
 How does President Biden and President Trump’s approval ratings of
 responding to the Coronavirus compare with each other?
@@ -304,3 +304,22 @@ When comparing each President’s disapproval ratings, the median
 disapproval rating of Trump is about 10 percentage points higher than
 Biden. The highest and lowest disapproval rating of Trump is higher than
 that of Biden, respectively.
+
+## Conclusion/Next Steps
+
+The initial response by President Biden to the Coronavirus pandemic was
+positive. He received his highest approval ratings in his first year as
+President. By comparison, while President Trump did receive high
+approval ratings for handling the COVID-19 response, they were not as
+high as President Biden. The high favorable ratings President Biden
+received broke along party lines, with the President receiving a high of
+almost 93% approval from Democrats and only a high of 34% from
+Republicans. However, Independents, who do not have a party affiliation,
+had a high of 60% approval of President Biden’s response. This indicates
+that while there is certain polarization when examining the how
+respondents approved/disapproved of President Biden, those who
+identified as Independents may not hold the same inclinations of bias.
+Further exploration can be done comparing the approval and disapproval
+ratings of each President, analyzing how party affiliation dictated
+whether respondents were more likely to approve or disapprove each
+President’s handling of the pandemic.

@@ -1,0 +1,141 @@
+---
+title: "DATA 607 Assignment 2"
+author: "Mohamed Hassan-El Serafi"
+date: "2023-02-05"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading Necessary Libraries
+
+```{r cars}
+library(tidyverse)
+library(RMySQL)
+library(dbplyr)
+library(DBI)
+```
+
+## Converting SQL table to R DataFrame
+
+I imported a table called Movie Ratings Survey through the MySQL database Movie Rating. In order to hide the password, I assigned a variable 'psswd' to a function, .rs.askforPassword("Database Password:"), in order to gain access into the MySQL Database. The dataset consists of ratings from family and friends of movies that were recently released. The rating scale is from 1 to 5, 1 representing the person extremely dislikes the movie and would not recommend the movie, and 5 being extremely likes the movie and would recommend the movie.
+
+```{r}
+psswd <- .rs.askForPassword("Database Password:")
+sql_db_con <- dbConnect(MySQL(), user='root', password=psswd,
+                        dbname="Movie_Rating", host='localhost')
+
+
+dbListTables(sql_db_con)
+movie_ratings <- tbl(sql_db_con, 'Movie_Ratings_Survey')
+movie_ratings
+
+
+dbListFields(sql_db_con, 'Movie_Ratings_Survey')
+rs = dbSendQuery(sql_db_con, "select * from Movie_Ratings_Survey")
+data <- fetch(rs, n=-1)
+data
+```
+## Snapshot of Data
+
+Now that my data is loaded, I explored the dataset further:
+
+```{r}
+glimpse(data)
+dim(data)
+mean(data$Rating)
+median(data$Rating)
+colSums(data==0)
+```
+
+
+
+## Finding Average and Median Ratings by Name and Film
+
+There are 5 values in the dataset that have a 0 rating, which indicates that the respondents may not have watched the movie and therefore did not give a rating for the movie. To fill in those values, I subsetted the data looking at the mean and median based on Name and Film, respectively. From the results, I will choose how to fill in the zero values.
+
+### Average Rating by Name
+
+```{r}
+new_data <- data %>%
+  group_by(Name) %>%
+  summarise(new_rating = mean(Rating))
+new_data
+```
+
+### Average Rating by Film
+
+```{r}
+new_film_data <- data %>%
+  group_by(Film) %>%
+  summarise(new_rating = mean(Rating))
+new_film_data
+```
+
+### Median Rating by Name
+
+```{r}
+new_data_median <- data %>%
+  group_by(Name) %>%
+  summarise(new_rating = median(Rating))
+new_data_median
+```
+### Median Rating by Film
+
+```{r}
+new_film_median <- data %>%
+  group_by(Film) %>%
+  summarise(new_rating = median(Rating))
+new_film_median
+```
+## Replacing Zero Values with NA
+
+I transformed the zero values into NA values in order to replace the values with either the mean or median based on Name or Film.
+
+```{r}
+data[data == 0] <- NA                           
+data 
+```
+
+## Handling Missing Data
+
+For the values that have a zero, I will use the median value of the respondents' response to the other movies they gave ratings for.
+
+```{r}
+final_dataset <- data %>% 
+        group_by(Name) %>% 
+        mutate_at("Rating", function(x) replace(x, is.na(x), median(x, na.rm = TRUE)))
+final_dataset
+```
+
+Checking to see if there's any NA values in final_dataset created:
+
+```{r}
+sum(is.na(final_dataset))
+```
+
+
+## Summarizing Final Dataset
+
+
+```{r}
+new_final_dataset <- final_dataset %>%
+  group_by(Film) %>%
+  summarise(new_final_rating = mean(Rating))
+new_final_dataset
+```
+
+## Plotting new_final_dataset
+
+I created a barplot using the new_final_dataset:
+
+
+```{r pressure, echo=FALSE}
+ggplot(new_final_dataset, aes(x=reorder(Film,-new_final_rating), y=new_final_rating)) + 
+    geom_bar(color='black', fill='blue', position="dodge", stat="identity") +
+  xlab("Film") + ylab("Movie Rating") + ggtitle("Movie Ratings by Film")
+```
+
+As the barplot shows, Avatar rated the highest among the respondents, while Elvis rated the lowest.

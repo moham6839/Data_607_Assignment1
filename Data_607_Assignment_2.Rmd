@@ -16,15 +16,17 @@ library(tidyverse)
 library(RMySQL)
 library(dbplyr)
 library(DBI)
+library(keyring)
 ```
 
 ## Converting SQL table to R DataFrame
 
-I imported a table called Movie Ratings Survey through the MySQL database Movie Rating. In order to hide the password, I assigned a variable 'psswd' to a function, .rs.askforPassword("Database Password:"), in order to gain access into the MySQL Database. The dataset consists of ratings from family and friends of movies that were recently released. The rating scale is from 1 to 5, 1 representing the person extremely dislikes the movie and would not recommend the movie, and 5 being extremely likes the movie and would recommend the movie.
+I imported a table called Movie Ratings Survey through the MySQL database Movie Rating. In order to hide the password, I used the Keyring library in order to gain access into the MySQL Database. The dataset consists of ratings from family and friends of movies that were recently released. The rating scale is from 1 to 5, 1 representing the person extremely dislikes the movie and would not recommend the movie, and 5 being extremely likes the movie and would recommend the movie.
 
 ```{r}
-psswd <- .rs.askForPassword("Database Password:")
-sql_db_con <- dbConnect(MySQL(), user='root', password=psswd,
+
+#psswd <- .rs.askForPassword("Database Password:")
+sql_db_con <- dbConnect(MySQL(), user='root', password=key_get('MySQL', 'root'),
                         dbname="Movie_Rating", host='localhost')
 
 
